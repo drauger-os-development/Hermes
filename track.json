@@ -1,0 +1,39 @@
+{
+    "download server pool": {
+            "urls": [
+                    "us.download.draugeros.org",
+                    "de.download.draugeros.org",
+                    "au.download.draugeros.org"
+                ],
+            "all": "down",
+            "some": "degraded",
+            "type": "simple"
+        },
+    "website pool": {
+            "urls": [
+                    "draugeros.org",
+                    "beta.draugeros.org"
+                ],
+            "all": "down",
+            "some": "single down",
+            "type": "advanced"
+        },
+    "apt repository mirrors": {
+            "urls": [
+                    "apt.draugeros.org"
+                ],
+            "all": "down",
+            "some": "degraded",
+            "type": "simple"
+        },
+    "misc": {
+            "rsync service": {
+                    "url": "rsync.draugeros.org",
+                    "type": "simple"
+                },
+            "download optimization service": {
+                    "url": "download-optimizer.draugeros.org",
+                    "type": "advanced"
+                }
+        }
+}

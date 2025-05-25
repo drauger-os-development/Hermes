@@ -1,0 +1,24 @@
+{
+    "icmp": {
+            "timeout": 3,
+            "count": 3
+        },
+    "check_freq": 30,
+    "venv_name": "venv",
+    "fork_if_setup": true,
+    "file_list": ["hermes.py",
+                  "common.py",
+                  "check.py",
+                  "hermes_api.py",
+                  "track.json",
+                  "hermes.ini"],
+    "deps": ["icmplib",
+             "urllib3",
+             "flask"],
+    "entry_point": {
+            "module": "hermes",
+            "function": "main"
+        },
+    "key_len": 8,
+    "cache_to_disk": true
+}
