@@ -29,6 +29,7 @@ import sys
 import os
 import check
 import hermes_api as api
+import loading_api_response as lar
 
 
 def flask_runner(argv, pipe):
@@ -38,6 +39,14 @@ def flask_runner(argv, pipe):
         api.HERMES.run(host="0.0.0.0", debug=api.MODE)
     else:
         api.HERMES.run()
+
+
+def loading_flask_runner(mode: bool):
+    """Give Hermes API it's own process"""
+    if mode:
+        lar.HERMES.run(host="0.0.0.0", debug=mode)
+    else:
+        lar.HERMES.run()
 
 
 def main():
@@ -53,9 +62,12 @@ def main():
     check_proc = check.UptimeChecker(settings["key_len"])
     # time.sleep(0.001)
 
-    # # Start Flask
-    # proc = mp.Process(target=flask_runner, args=(sys.argv, check_proc))
-    # proc.start()
+    proc = None
+    if ("--debug" in sys.argv) or ("-debug" in sys.argv) or ("-d" in sys.argv):
+        proc = mp.Process(target=loading_flask_runner, args=(True,))
+    else:
+        proc = p.Process(target=loading_flask_runner, args=(False,))
+    proc.start()
 
 
     # Load settings
@@ -82,22 +94,38 @@ def main():
 
     time.sleep(30)
 
-    # Check it works
-    print("OBTAINING CACHE!")
-    response_key = check_proc.send("OBTAIN_FULL_CACHE")
-    data = check_proc.recv(response_key)
-    print(json.dumps(data, indent=2))
+    # Start Flask
+    print("Killing Loading Response...")
+    start = time.time()
+    while True:
+        if time.time() > (start + 5):
+            proc.terminate()
+        if proc.is_alive():
+            proc.kill()
+        else:
+            break
+        time.sleep(0.5)
+    time.sleep(5)
+    print("STARTING FLASK!")
+    proc = mp.Process(target=flask_runner, args=(sys.argv, check_proc))
+    proc.start()
 
-    time.sleep(60)
+    # # Check it works
+    # print("OBTAINING CACHE!")
+    # response_key = check_proc.send("OBTAIN_FULL_CACHE")
+    # data = check_proc.recv(response_key)
+    # print(json.dumps(data, indent=2))
 
-    print("OBTAINING CACHE!")
-    response_key = check_proc.send("OBTAIN_FULL_CACHE")
-    data = check_proc.recv(response_key)
-    print(json.dumps(data, indent=2))
+    time.sleep(900)
 
-    # Shutdown
-    check_proc.destruct()
-    print("DESTRUCTED!")
+    # print("OBTAINING CACHE!")
+    # response_key = check_proc.send("OBTAIN_FULL_CACHE")
+    # data = check_proc.recv(response_key)
+    # print(json.dumps(data, indent=2))
+    #
+    # # Shutdown
+    # check_proc.destruct()
+    # print("DESTRUCTED!")
 
 
 if __name__ == "__main__":

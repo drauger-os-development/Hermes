@@ -189,6 +189,8 @@ def check_main(pipe) -> None:
                elif "SETTINGS" in data:
                   settings = data["SETTINGS"]
                   pipe.send_response(each, "ACCEPTED")
+               elif "OBTAIN" in data:
+                  pipe.send_response(each, cache[data["OBTAIN"]])
             elif isinstance(data, str):
                if data.upper() == "START":
                   if running:
@@ -217,6 +219,8 @@ def check_main(pipe) -> None:
                   return
                if data.upper() == "OBTAIN_FULL_CACHE":
                   pipe.send_response(each, cache)
+               elif data.upper() == "OBTAIN_CATAGORIES":
+                  pipe.send_response(each, tuple(cache.keys()))
 
       ### END OF COMMAND HANDLING
 

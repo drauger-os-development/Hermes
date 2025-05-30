@@ -1,5 +1,5 @@
 {
-    "download server pool": {
+    "download_server_pool": {
             "urls": [
                     "us.download.draugeros.org",
                     "de.download.draugeros.org",
@@ -9,7 +9,7 @@
             "some": "degraded",
             "type": "simple"
         },
-    "website pool": {
+    "website_pool": {
             "urls": [
                     "draugeros.org",
                     "beta.draugeros.org"
@@ -18,7 +18,7 @@
             "some": "single down",
             "type": "advanced"
         },
-    "apt repository mirrors": {
+    "apt_repository_mirrors": {
             "urls": [
                     "apt.draugeros.org"
                 ],

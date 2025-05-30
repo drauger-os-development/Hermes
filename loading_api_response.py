@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  hermes_api.py
+#  loading_api_response.py
 #
 #  Copyright 2025 Thomas Castleman <batcastle@draugeros.org>
 #
@@ -22,19 +22,9 @@
 #
 #
 """Provide REST API to retreive statuses"""
-from flask import Flask, request, redirect, render_template, send_from_directory, url_for
+from flask import Flask
 
 HERMES = Flask(__name__)
-MODE = False
-PIPE = None
-
-
-def init(argv, pipe):
-    global MODE
-    global PIPE
-    if ("--debug" in argv) or ("-debug" in argv) or ("-d" in argv):
-        MODE = True
-    PIPE = pipe
 
 @HERMES.errorhandler(404)
 def error_404(e):
@@ -91,34 +81,4 @@ def internal_error():
 @HERMES.route("/")
 def root() -> dict:
     """Root directory"""
-    global PIPE
-    key = PIPE.send("OBTAIN_FULL_CACHE")
-    possible_nodes = PIPE.recv(key)
-    print("RETREIVED POSSIBLE NODES!")
-    output = {"return_status": 200,
-              "NEXT": f"{request.url_root[:-1]}{url_for("catagories")}"}
-    return output
-
-
-@HERMES.route("/catagories")
-def catagories() -> dict:
-    global PIPE
-    key = PIPE.send("OBTAIN_CATAGORIES")
-    output = {"return_status": 200, "output":{}}
-    possible_nodes = PIPE.recv(key)
-    for each in possible_nodes:
-        output["output"][each] = f"{request.url_root[:-1]}{url_for("catagories")}/{each}"
-    return output
-
-
-@HERMES.route("/catagories/<catagory>")
-def get_node(catagory: str) -> dict:
-    global PIPE
-    key = PIPE.send("OBTAIN_CATAGORIES")
-    possible_nodes = PIPE.recv(key)
-    if catagory not in possible_nodes:
-        redirect("/404", 404)
-    key = PIPE.send({"OBTAIN": catagory})
-    output = {"output": PIPE.recv(key)}
-    output["return_status"] = 200
-    return output
+    return {"return_status": "Loading..."}
